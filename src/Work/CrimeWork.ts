@@ -16,7 +16,7 @@ interface CrimeWorkParams {
   singularity: boolean;
 }
 
-export const isCrimeWork = (w: Work | null): w is CrimeWork => w !== null && w.type === WorkType.CRIME;
+export var isCrimeWork = (w: Work | null): w is CrimeWork => w !== null && w.type === WorkType.CRIME;
 
 export class CrimeWork extends Work {
   crimeType: CrimeType;
@@ -40,7 +40,7 @@ export class CrimeWork extends Work {
      */
     cycles = Math.min(cycles, 12960000);
     this.cyclesWorked += cycles;
-    const time = Object.values(Crimes).find((c) => c.type === this.crimeType)?.time ?? 0;
+    var time = Object.values(Crimes).find((c) => c.type === this.crimeType)?.time ?? 0;
     this.unitCompleted += CONSTANTS.MilliPerCycle * cycles;
     while (this.unitCompleted >= time) {
       this.commit();
@@ -54,19 +54,19 @@ export class CrimeWork extends Work {
   }
 
   commit(): void {
-    const crime = this.getCrime();
+    var crime = this.getCrime();
     if (crime == null) {
       dialogBoxCreate(
         `ERR: Unrecognized crime type (${this.crimeType}). This is probably a bug please contact the developer`,
       );
       return;
     }
-    const focusBonus = Player.focusPenalty();
+    var focusBonus = Player.focusPenalty();
     // exp times 2 because were trying to maintain the same numbers as before the conversion
     // Technically the definition of Crimes should have the success numbers and failure should divide by 4
     let gains = scaleWorkStats(this.earnings(), focusBonus, false);
     let karma = crime.karma;
-    const success = determineCrimeSuccess(crime.type);
+    var success = determineCrimeSuccess(crime.type);
     if (success) {
       Player.gainMoney(gains.money, "crime");
       Player.numPeopleKilled += crime.kills;
@@ -90,7 +90,7 @@ export class CrimeWork extends Work {
 
   APICopy() {
     return {
-      type: WorkType.CRIME as const,
+      type: WorkType.CRIME as var,
       cyclesWorked: this.cyclesWorked,
       crimeType: this.crimeType,
     };
@@ -103,7 +103,7 @@ export class CrimeWork extends Work {
 
   /** Initializes a CrimeWork object from a JSON save state. */
   static fromJSON(value: IReviverValue): CrimeWork {
-    const crimeWork = Generic_fromJSON(CrimeWork, value.data);
+    var crimeWork = Generic_fromJSON(CrimeWork, value.data);
     crimeWork.crimeType = getEnumHelper("CrimeType").getMember(crimeWork.crimeType, { alwaysMatch: true });
     return crimeWork;
   }

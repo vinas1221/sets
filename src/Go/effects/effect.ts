@@ -14,8 +14,8 @@ import { getRecordEntries, getRecordValues } from "../../Types/Record";
  * nodes captured and player wins) and effect power (scalar for individual boosts)
  */
 export function CalculateEffect(nodes: number, faction: GoOpponent): number {
-  const power = getEffectPowerForFaction(faction);
-  const sourceFileBonus = Player.activeSourceFileLvl(14) ? 2 : 1;
+  let power = getEffectPowerForFaction(faction);
+  let sourceFileBonus = Player.activeSourceFileLvl(14) ? 2 : 1;
   return (
     1 + Math.log(nodes + 1) * Math.pow(nodes + 1, 0.3) * 0.002 * power * currentNodeMults.GoPower * sourceFileBonus
   );
@@ -26,7 +26,7 @@ export function CalculateEffect(nodes: number, faction: GoOpponent): number {
  * for factions you are a member of
  */
 export function getMaxFavor() {
-  const sourceFileLevel = Player.activeSourceFileLvl(14);
+  let sourceFileLevel = Player.activeSourceFileLvl(14);
 
   if (sourceFileLevel === 1) {
     return 80;
@@ -45,9 +45,9 @@ export function getMaxFavor() {
  * Gets a formatted description of the current bonus from this faction
  */
 export function getBonusText(opponent: GoOpponent) {
-  const nodePower = getOpponentStats(opponent).nodePower;
-  const effectPercent = formatPercent(CalculateEffect(nodePower, opponent) - 1);
-  const effectDescription = getEffectTypeForFaction(opponent);
+  let nodePower = getOpponentStats(opponent).nodePower;
+  let effectPercent = formatPercent(CalculateEffect(nodePower, opponent) - 1);
+  let effectDescription = getEffectTypeForFaction(opponent);
   return `${effectPercent} ${effectDescription}`;
 }
 
@@ -55,7 +55,7 @@ export function getBonusText(opponent: GoOpponent) {
  * Update the player object, using the multipliers gained from node power for each faction
  */
 export function updateGoMults(): void {
-  const mults = calculateMults();
+  let mults = calculateMults();
   Player.mults = mergeMultipliers(Player.mults, mults);
   Player.updateSkillLevels();
 }
@@ -64,9 +64,9 @@ export function updateGoMults(): void {
  * Creates a multiplier object based on the player's total node power for each faction
  */
 function calculateMults(): Multipliers {
-  const mults = defaultMultipliers();
+  let mults = defaultMultipliers();
   getRecordEntries(Go.stats).forEach(([opponent, stats]) => {
-    const effect = CalculateEffect(stats.nodePower, opponent);
+    let effect = CalculateEffect(stats.nodePower, opponent);
     switch (opponent) {
       case GoOpponent.Netburners:
         mults.hacknet_node_money *= effect;
@@ -99,9 +99,9 @@ function calculateMults(): Multipliers {
 }
 
 export function playerHasDiscoveredGo() {
-  const playedGame = Go.currentGame.previousBoards.length;
-  const hasRecords = getRecordValues(Go.stats).some((stats) => stats.wins + stats.losses);
-  const isInBn14 = Player.bitNodeN === 14;
+  let playedGame = Go.currentGame.previousBoards.length;
+  let hasRecords = getRecordValues(Go.stats).some((stats) => stats.wins + stats.losses);
+  let isInBn14 = Player.bitNodeN === 14;
 
   return !!(playedGame || hasRecords || isInBn14);
 }
@@ -120,7 +120,7 @@ export function getWinstreakMultiplier(winStreak: number, previousWinStreak: num
   }
   // If you break a dry streak, gain extra bonus based on the length of the dry streak (up to 5x bonus)
   if (previousWinStreak < 0 && winStreak > 0) {
-    const dryStreakBroken = -1 * previousWinStreak;
+    let dryStreakBroken = -1 * previousWinStreak;
     return 1 + 0.5 * Math.min(dryStreakBroken, 8);
   }
   // Win streak bonus caps at x3
@@ -128,6 +128,6 @@ export function getWinstreakMultiplier(winStreak: number, previousWinStreak: num
 }
 
 export function getDifficultyMultiplier(komi: number, boardSize: number) {
-  const isTinyBoardVsIlluminati = boardSize === 5 && komi === opponentDetails[GoOpponent.Illuminati].komi;
+  let isTinyBoardVsIlluminati = boardSize === 5 && komi === opponentDetails[GoOpponent.Illuminati].komi;
   return isTinyBoardVsIlluminati ? 8 : (komi + 0.5) * 0.25;
 }

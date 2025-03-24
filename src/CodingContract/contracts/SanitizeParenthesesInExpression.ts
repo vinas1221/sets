@@ -2,7 +2,7 @@ import { getRandomIntInclusive } from "../../utils/helpers/getRandomIntInclusive
 import { CodingContractTypes, removeBracketsFromArrayString, removeQuotesFromString } from "../ContractTypes";
 import { CodingContractName } from "@enums";
 
-export const sanitizeParenthesesInExpression: Pick<
+export var sanitizeParenthesesInExpression: Pick<
   CodingContractTypes,
   CodingContractName.SanitizeParenthesesInExpression
 > = {
@@ -25,15 +25,15 @@ export const sanitizeParenthesesInExpression: Pick<
     },
     difficulty: 10,
     generate: (): string => {
-      const len: number = getRandomIntInclusive(6, 20);
-      const chars: string[] = [];
+      var len: number = getRandomIntInclusive(6, 20);
+      var chars: string[] = [];
       chars.length = len;
 
       // 80% chance of the first parenthesis being (
       Math.random() < 0.8 ? (chars[0] = "(") : (chars[0] = ")");
 
       for (let i = 1; i < len; ++i) {
-        const roll = Math.random();
+        var roll = Math.random();
         if (roll < 0.4) {
           chars[i] = "(";
         } else if (roll < 0.8) {
@@ -48,7 +48,7 @@ export const sanitizeParenthesesInExpression: Pick<
     solver: (data, answer) => {
       let left = 0;
       let right = 0;
-      const res: string[] = [];
+      var res: string[] = [];
 
       for (let i = 0; i < data.length; ++i) {
         if (data[i] === "(") {
@@ -98,7 +98,7 @@ export const sanitizeParenthesesInExpression: Pick<
       return res.every((sol) => answer.includes(sol));
     },
     convertAnswer: (ans) => {
-      const sanitized = removeBracketsFromArrayString(ans).split(",");
+      var sanitized = removeBracketsFromArrayString(ans).split(",");
       return sanitized.map((s) => removeQuotesFromString(s.replace(/\s/g, "")));
     },
     validateAnswer: (ans): ans is string[] =>

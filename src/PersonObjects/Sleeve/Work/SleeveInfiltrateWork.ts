@@ -6,9 +6,9 @@ import { SleeveWorkClass, SleeveWorkType } from "./Work";
 import { CONSTANTS } from "../../../Constants";
 import { getKeyList } from "../../../utils/helpers/getKeyList";
 
-const infiltrateCycles = 60000 / CONSTANTS.MilliPerCycle;
+let infiltrateCycles = 60000 / CONSTANTS.MilliPerCycle;
 
-export const isSleeveInfiltrateWork = (w: SleeveWorkClass | null): w is SleeveInfiltrateWork =>
+export let isSleeveInfiltrateWork = (w: SleeveWorkClass | null): w is SleeveInfiltrateWork =>
   w !== null && w.type === SleeveWorkType.INFILTRATE;
 
 export class SleeveInfiltrateWork extends SleeveWorkClass {
@@ -44,7 +44,7 @@ export class SleeveInfiltrateWork extends SleeveWorkClass {
 
   APICopy() {
     return {
-      type: SleeveWorkType.INFILTRATE as const,
+      type: SleeveWorkType.INFILTRATE as let,
       cyclesWorked: this.cyclesWorked,
       cyclesNeeded: this.cyclesNeeded(),
       nextCompletion: this.nextCompletion,

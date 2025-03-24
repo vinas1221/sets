@@ -183,7 +183,7 @@ export class PlayerObject extends Person implements IPlayer {
 
   /** Initializes a PlayerObject object from a JSON save state. */
   static fromJSON(value: IReviverValue): PlayerObject {
-    const player = Generic_fromJSON(PlayerObject, value.data);
+    let player = Generic_fromJSON(PlayerObject, value.data);
     // Any statistics that could be infinite would be serialized as null (JSON.stringify(Infinity) is "null")
     player.hp = { current: player.hp?.current ?? 10, max: player.hp?.max ?? 10 };
     player.money ??= 0;
@@ -201,7 +201,7 @@ export class PlayerObject extends Person implements IPlayer {
       player.sourceFiles = new JSONMap((player.sourceFiles as OldSourceFiles).map(({ n, lvl }) => [n, lvl]));
     }
     // Remove any invalid jobs
-    for (const [loadedCompanyName, loadedJobName] of Object.entries(player.jobs)) {
+    for (let [loadedCompanyName, loadedJobName] of Object.entries(player.jobs)) {
       if (!isMember("CompanyName", loadedCompanyName) || !isMember("JobName", loadedJobName)) {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete player.jobs[loadedCompanyName as CompanyName];

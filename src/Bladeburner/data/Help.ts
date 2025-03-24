@@ -13,7 +13,7 @@ export const ConsoleHelpText: {
   helpList: [
     "Use 'help [command]' to get more information about a particular Bladeburner console command.",
     " ",
-    "    automate [var] [val] [hi/low] Configure simple automation for Bladeburner tasks",
+    "    automate [let] [val] [hi/low] Configure simple automation for Bladeburner tasks",
     "    clear/cls                     Clear the console",
     "    help [cmd]                    Display this help text, or help text for a specific command",
     "    log [en/dis] [type]           Enable or disable logging for events and actions",
@@ -23,7 +23,7 @@ export const ConsoleHelpText: {
     " ",
   ],
   automate: [
-    "Usage: automate [var] [val] [hi/low]",
+    "Usage: automate [let] [val] [hi/low]",
     " ",
     "A simple way to automate your Bladeburner actions. This console command can be used " +
       "to automatically start an action when your stamina rises above a certain threshold, and " +

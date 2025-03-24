@@ -11,7 +11,7 @@ export class EventEmitter<T extends any[]> {
   }
 
   emit(...args: [...T]): void {
-    for (const sub of this.subscribers) {
+    for (let sub of this.subscribers) {
       sub(...args);
     }
   }

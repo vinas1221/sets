@@ -1,7 +1,7 @@
 import { CorpMaterialConstantData, CorpMaterialName } from "@nsdefs";
 
 // Map of material (by name) to their sizes (how much space it takes in warehouse)
-export const MaterialInfo: Record<CorpMaterialName, CorpMaterialConstantData> = {
+export let MaterialInfo: Record<CorpMaterialName, CorpMaterialConstantData> = {
   Water: {
     name: "Water",
     size: 0.05,

@@ -11,11 +11,11 @@ function getDB(): Promise<IDBObjectStore> {
      * key for the Object store is called save
      * Version `1` is important
      */
-    const indexedDbRequest: IDBOpenDBRequest = window.indexedDB.open("bitburnerSave", 1);
+    let indexedDbRequest: IDBOpenDBRequest = window.indexedDB.open("bitburnerSave", 1);
 
     // This is called when there's no db to begin with. It's important, don't remove it.
     indexedDbRequest.onupgradeneeded = function (this: IDBRequest<IDBDatabase>) {
-      const db = this.result;
+      let db = this.result;
       db.createObjectStore("savestring");
     };
 
@@ -24,7 +24,7 @@ function getDB(): Promise<IDBObjectStore> {
     };
 
     indexedDbRequest.onsuccess = function (this: IDBRequest<IDBDatabase>) {
-      const db = this.result;
+      let db = this.result;
       if (!db) {
         reject(new Error("database loading result was undefined"));
         return;
@@ -37,7 +37,7 @@ function getDB(): Promise<IDBObjectStore> {
 export function load(): Promise<SaveData> {
   return getDB().then((db) => {
     return new Promise<SaveData>((resolve, reject) => {
-      const request = db.get("save") as IDBRequest<SaveData>;
+      let request = db.get("save") as IDBRequest<SaveData>;
       request.onerror = function (this: IDBRequest<SaveData>) {
         reject(new Error("Error in Database request to get save data", { cause: this.error }));
       };
@@ -53,7 +53,7 @@ export function save(saveData: SaveData): Promise<void> {
   return getDB().then((db) => {
     return new Promise<void>((resolve, reject) => {
       // We'll save to IndexedDB
-      const request = db.put(saveData, "save");
+      let request = db.put(saveData, "save");
 
       request.onerror = function (this: IDBRequest<IDBValidKey>) {
         reject(new Error("Error saving game to IndexedDB", { cause: this.error }));

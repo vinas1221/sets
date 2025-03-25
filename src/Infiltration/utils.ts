@@ -2,10 +2,10 @@ import { KEY } from "../utils/KeyboardEventKey";
 import { Player } from "@player";
 import { AugmentationName } from "@enums";
 
-export const upArrowSymbol = "↑";
-export const downArrowSymbol = "↓";
-export const leftArrowSymbol = "←";
-export const rightArrowSymbol = "→";
+export let upArrowSymbol = "↑";
+export let downArrowSymbol = "↓";
+export let leftArrowSymbol = "←";
+export let rightArrowSymbol = "→";
 
 export type Arrow = typeof leftArrowSymbol | typeof rightArrowSymbol | typeof upArrowSymbol | typeof downArrowSymbol;
 

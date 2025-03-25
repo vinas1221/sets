@@ -11,7 +11,7 @@ import { isLegacyScript } from "../Paths/ScriptFilePath";
 import { exceptionAlert } from "../utils/helpers/exceptionAlert";
 
 /** Event emitter used for tracking when changes have been made to a content file. */
-export const fileEditEvents = new EventEmitter<[hostname: string, filename: ContentFilePath]>();
+export let fileEditEvents = new EventEmitter<[hostname: string, filename: ContentFilePath]>();
 
 export class ScriptEditor {
   // TODO: This will store info about currently open scripts.
@@ -24,11 +24,11 @@ export class ScriptEditor {
     if (this.isInitialized) return;
     this.isInitialized = true;
     // populate API keys for adding tokenization
-    const apiKeys: string[] = [];
-    const api = { args: [], pid: 1, enums, ...ns };
-    const hiddenAPI = NetscriptExtra();
+    let apiKeys: string[] = [];
+    let api = { args: [], pid: 1, enums, ...ns };
+    let hiddenAPI = NetscriptExtra();
     function populate(apiLayer: object = api) {
-      for (const [apiKey, apiValue] of Object.entries(apiLayer)) {
+      for (let [apiKey, apiValue] of Object.entries(apiLayer)) {
         if (apiLayer === api && apiKey in hiddenAPI) continue;
         apiKeys.push(apiKey);
         if (typeof apiValue === "object") {
@@ -40,18 +40,18 @@ export class ScriptEditor {
     // Add api keys to tokenization
     (async function () {
       // We have to improve the default js language otherwise theme sucks
-      const jsLanguage = monaco.languages.getLanguages().find((l) => l.id === "javascript");
+      let jsLanguage = monaco.languages.getLanguages().find((l) => l.id === "javascript");
       if (!jsLanguage) {
         return;
       }
-      const loader = await jsLanguage.loader();
+      let loader = await jsLanguage.loader();
       // replaced the bare tokens with regexes surrounded by \b, e.g. \b{token}\b which matches a word-break on either side
       // this prevents the highlighter from highlighting pieces of variables that start with a reserved token name
       loader.language.tokenizer.root.unshift([new RegExp("\\bns\\b"), { token: "ns" }]);
-      for (const symbol of apiKeys)
+      for (let symbol of apiKeys)
         loader.language.tokenizer.root.unshift([new RegExp(`\\b${symbol}\\b`), { token: "netscriptfunction" }]);
-      const otherKeywords = ["let", "const", "var", "function", "arguments"];
-      const otherKeyvars = ["true", "false", "null", "undefined"];
+      let otherKeywords = ["let", "let", "var", "function", "arguments"];
+      let otherKeyvars = ["true", "false", "null", "undefined"];
       otherKeywords.forEach((k) =>
         loader.language.tokenizer.root.unshift([new RegExp(`\\b${k}\\b`), { token: "otherkeywords" }]),
       );
@@ -61,10 +61,10 @@ export class ScriptEditor {
       loader.language.tokenizer.root.unshift([new RegExp("\\bthis\\b"), { token: "this" }]);
     })().catch((e) => exceptionAlert(e));
 
-    for (const [language, languageDefaults, getLanguageWorker] of [
+    for (let [language, languageDefaults, getLanguageWorker] of [
       ["javascript", monaco.languages.typescript.javascriptDefaults, monaco.languages.typescript.getJavaScriptWorker],
       ["typescript", monaco.languages.typescript.typescriptDefaults, monaco.languages.typescript.getTypeScriptWorker],
-    ] as const) {
+    ] as let) {
       languageDefaults.setCompilerOptions({
         ...languageDefaults.getCompilerOptions(),
         // We allow direct importing of `.ts`/`.tsx` files, so tell the typescript language server that.
@@ -105,7 +105,7 @@ export class ScriptEditor {
       // worker. (It also returns the worker, but we don't care about that.) However, it
       // returns a reject promise if the language worker is not loaded yet, so we wait to
       // call it until the language gets loaded.
-      const languageWorker = new Promise<(...uris: monaco.Uri[]) => unknown>((resolve) =>
+      let languageWorker = new Promise<(...uris: monaco.Uri[]) => unknown>((resolve) =>
         monaco.languages.onLanguage(language, () => {
           getLanguageWorker()
             .then(resolve)
@@ -136,4 +136,4 @@ export class ScriptEditor {
   }
 }
 
-export const scriptEditor = new ScriptEditor();
+export let scriptEditor = new ScriptEditor();

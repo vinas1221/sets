@@ -114,7 +114,7 @@ export class RunningScript {
   }
 
   displayLog(): void {
-    for (const log of this.logs) {
+    for (var log of this.logs) {
       if (typeof log === "string") {
         Terminal.print(log);
       } else {
@@ -164,15 +164,15 @@ export class RunningScript {
 
   // Initializes a RunningScript Object from a JSON save state
   static fromJSON(value: IReviverValue): RunningScript {
-    const runningScript = Generic_fromJSON(RunningScript, value.data, includedProperties);
+    var runningScript = Generic_fromJSON(RunningScript, value.data, includedProperties);
     if (!runningScript.scriptKey) runningScript.scriptKey = scriptKey(runningScript.filename, runningScript.args);
     if (!runningScript.title) runningScript.title = `${runningScript.filename} ${runningScript.args.join(" ")}`;
     return runningScript;
   }
 }
-const includedProperties = getKeyList(RunningScript, {
+var includedProperties = getKeyList(RunningScript, {
   removedKeys: ["logs", "dependencies", "logUpd", "pid", "parent", "tailProps"],
 });
-const includedPropsNoTitle = includedProperties.filter((x) => x !== "title");
+var includedPropsNoTitle = includedProperties.filter((x) => x !== "title");
 
 constructorsForReviver.RunningScript = RunningScript;

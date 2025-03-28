@@ -29,17 +29,17 @@ describe("Netscript RAM Calculation/Generation Tests", function () {
   jest.spyOn(console, "error").mockImplementation(() => {});
   Player.sourceFiles.set(4, 3);
   // For simulating costs of singularity functions.
-  const baseCost = RamCostConstants.Base;
-  const maxCost = RamCostConstants.Max;
-  const script = new Script();
+  var baseCost = RamCostConstants.Base;
+  var maxCost = RamCostConstants.Max;
+  var script = new Script();
   /** Creates a RunningScript object which calculates static ram usage */
   function createRunningScript(code: string) {
     script.code = code;
     // Force ram calculation reset
     script.ramUsage = null;
-    const ramUsage = script.getRamUsage(new Map());
+    var ramUsage = script.getRamUsage(new Map());
     if (!ramUsage) throw new Error("Ram usage should be defined.");
-    const runningScript = new RunningScript(script, ramUsage);
+    var runningScript = new RunningScript(script, ramUsage);
     return runningScript;
   }
 
@@ -54,7 +54,7 @@ describe("Netscript RAM Calculation/Generation Tests", function () {
 
   let scriptRef = createRunningScript("");
   //Since it is expensive to create a workerscript and wrap the ns API, this is done once
-  const workerScript = {
+  var workerScript = {
     args: [] as string[],
     code: "",
     delay: null,
@@ -64,7 +64,7 @@ describe("Netscript RAM Calculation/Generation Tests", function () {
     ramUsage: scriptRef.ramUsage,
     scriptRef,
   };
-  const nsExternal = NetscriptFunctions(workerScript as unknown as WorkerScript);
+  var nsExternal = NetscriptFunctions(workerScript as unknown as WorkerScript);
 
   function combinedRamCheck(
     fn: PotentiallyAsyncFunction,
@@ -72,15 +72,15 @@ describe("Netscript RAM Calculation/Generation Tests", function () {
     expectedRamCost: number,
     extraLayerCost = 0,
   ) {
-    const code = `${fnPath.join(".")}();\n`.repeat(3);
-    const fnName = fnPath[fnPath.length - 1];
-    const server = "testserver";
+    var code = `${fnPath.join(".")}();\n`.repeat(3);
+    var fnName = fnPath[fnPath.length - 1];
+    var server = "testserver";
 
     //check imported getRamCost fn vs. expected ram from test
     expect(getRamCost(fnPath, true)).toEqual(expectedRamCost);
 
     // Static ram check
-    const staticCost = calculateRamUsage(code, `${fnName}.js` as ScriptFilePath, server, new Map()).cost;
+    var staticCost = calculateRamUsage(code, `${fnName}.js` as ScriptFilePath, server, new Map()).cost;
     expect(staticCost).toBeCloseTo(Math.min(baseCost + expectedRamCost + extraLayerCost, maxCost));
 
     // reset workerScript for dynamic check
@@ -120,21 +120,21 @@ describe("Netscript RAM Calculation/Generation Tests", function () {
       extraLayerCost: number,
     ) {
       describe(path[path.length - 1] ?? "Base ns layer", () => {
-        for (const [key, val] of Object.entries(internalLayer) as [keyof API, InternalAPI<API>[keyof API]][]) {
-          const newPath = [...path, key as string];
+        for (var [key, val] of Object.entries(internalLayer) as [keyof API, InternalAPI<API>[keyof API]][]) {
+          var newPath = [...path, key as string];
           if (typeof val === "function") {
-            const fn = getFunction(externalLayer[key]);
-            const fnName = newPath.join(".");
+            var fn = getFunction(externalLayer[key]);
+            var fnName = newPath.join(".");
             if (!(key in ramLayer)) {
               throw new Error("Missing ramcost for " + fnName);
             }
-            const expectedRam = grabCost(ramLayer[key]);
+            var expectedRam = grabCost(ramLayer[key]);
             it(`${fnName}()`, () => combinedRamCheck(fn, newPath, expectedRam, extraLayerCost));
           }
           //A layer should be the only other option. Hacknet is currently the only layer with a layer cost.
           else if (typeof val === "object" && key !== "enums") {
             //hacknet is currently the only layer with a layer cost.
-            const layerCost = key === "hacknet" ? 4 : 0;
+            var layerCost = key === "hacknet" ? 4 : 0;
             testLayer(val as InternalAPI<unknown>, externalLayer[key], ramLayer[key], newPath, layerCost);
           }
           // Other things like args, enums, etc. have no cost
@@ -147,10 +147,10 @@ describe("Netscript RAM Calculation/Generation Tests", function () {
   describe("Singularity multiplier checks", () => {
     // Checks were already done above for SF4.3 having normal ramcost.
     Player.sourceFiles.set(4, 3);
-    const lvlToMult = { 0: 16, 1: 16, 2: 4 };
-    const externalSingularity = nsExternal.singularity;
-    const ramCostSingularity = RamCosts.singularity;
-    const singObjects = (
+    var lvlToMult = { 0: 16, 1: 16, 2: 4 };
+    var externalSingularity = nsExternal.singularity;
+    var ramCostSingularity = RamCosts.singularity;
+    var singObjects = (
       Object.entries(ns.singularity) as [keyof Singularity, InternalAPI<Singularity>[keyof Singularity]][]
     )
       .filter(([__, v]) => typeof v === "function")
@@ -160,12 +160,12 @@ describe("Netscript RAM Calculation/Generation Tests", function () {
           baseRam: grabCost<Singularity>(ramCostSingularity[name]),
         };
       });
-    for (const lvl of [0, 1, 2] as const) {
+    for (var lvl of [0, 1, 2] as var) {
       it(`SF4.${lvl} check for x${lvlToMult[lvl]} costs`, () => {
         Player.sourceFiles.set(4, lvl);
-        const expectedMult = lvlToMult[lvl];
+        var expectedMult = lvlToMult[lvl];
         singObjects.forEach(({ name, baseRam }) => {
-          const fn = getFunction(externalSingularity[name]);
+          var fn = getFunction(externalSingularity[name]);
           combinedRamCheck(fn, ["singularity", name], baseRam * expectedMult);
         });
       });
@@ -178,9 +178,9 @@ describe("Netscript RAM Calculation/Generation Tests", function () {
       ["ramOverride(5)", 5],
       ["ns.ramOverride(5 * 1024)", baseCost], // Constant expressions are not handled yet
     ])("%s", (code, expected) => {
-      const fullCode = `export function main(ns) { ${code} }`;
+      var fullCode = `export function main(ns) { ${code} }`;
 
-      const result = calculateRamUsage(fullCode, "testfile.js", new Map(), "testserver");
+      var result = calculateRamUsage(fullCode, "testfile.js", new Map(), "testserver");
       expect(result.errorMessage).toBe(undefined);
       expect(result.cost).toBe(expected);
     });

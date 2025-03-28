@@ -23,7 +23,7 @@ export class Remote {
   }
 
   public startConnection(): void {
-    const address = (Settings.UseWssForRemoteFileApi ? "wss" : "ws") + "://" + this.ipaddr + ":" + this.port;
+    let address = (Settings.UseWssForRemoteFileApi ? "wss" : "ws") + "://" + this.ipaddr + ":" + this.port;
     try {
       this.connection = new WebSocket(address);
     } catch (error) {
@@ -51,14 +51,14 @@ function handleMessageEvent(this: WebSocket, e: MessageEvent): void {
    * Validating e.data and the result of JSON.parse() is too troublesome, so we typecast them here. If the data is
    * invalid, it means the RFA "client" (the tool that the player is using) is buggy, but that's not our problem.
    */
-  const msg = JSON.parse(e.data as string) as RFAMessage;
+  let msg = JSON.parse(e.data as string) as RFAMessage;
 
   if (!msg.method || !RFARequestHandler[msg.method]) {
-    const response = new RFAMessage({ error: "Unknown message received", id: msg.id });
+    let response = new RFAMessage({ error: "Unknown message received", id: msg.id });
     this.send(JSON.stringify(response));
     return;
   }
-  const response = RFARequestHandler[msg.method](msg);
+  let response = RFARequestHandler[msg.method](msg);
   if (!response) return;
 
   if (response instanceof Promise) {
